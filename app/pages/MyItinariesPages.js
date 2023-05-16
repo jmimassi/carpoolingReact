@@ -148,7 +148,69 @@ const ItinariesPages = () => {
         }
     };
 
+    const handleAcceptPassenger = async (passenger) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
 
+            const { itinaries_user_id } = passenger;
+            const options = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(
+                `http://localhost:8000/api/booking/${itinaries_user_id}/accept`,
+                options
+            );
+
+            if (response.ok) {
+                console.log('Passenger accepted successfully');
+            } else {
+                console.error('Accept request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleDenyPassenger = async (passenger) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            const { itinaries_user_id } = passenger;
+            const options = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(
+                `http://localhost:8000/api/booking/${itinaries_user_id}/deny`,
+                options
+            );
+
+            if (response.ok) {
+                console.log('Passenger denied successfully');
+            } else {
+                console.error('Deny request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
 
     const handleSearchTextChange = (text) => {
@@ -249,8 +311,7 @@ const ItinariesPages = () => {
                                         style={[
                                             styles.passengerCard,
                                             passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
-                                        ]}
-                                    >
+                                        ]}>
                                         <Text>User: {passenger.fk_user}</Text>
                                         <Text>Message: {passenger.message}</Text>
                                         <View style={styles.buttonContainer}>
@@ -265,9 +326,6 @@ const ItinariesPages = () => {
                     </ScrollView>
                 </View>
             </Modal>
-
-
-
         </ScrollView>
     );
 };
