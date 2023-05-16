@@ -8,7 +8,9 @@ const ItinariesPages = () => {
     const [itinaries, setItinaries] = useState([]);
     const [selectedItinerary, setSelectedItinerary] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [NewModalVisible, setNewModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [passengersList, setPassengersList] = useState([]);
     const [formValues, setFormValues] = useState({
         startAddress: '',
         seats: 0,
@@ -114,6 +116,41 @@ const ItinariesPages = () => {
         setModalVisible(false);
     };
 
+
+    const requestItinerary = async (
+        itinerary) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(`http://localhost:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log(data);
+                setModalVisible(false);
+                setPassengersList(data.itinaries_users);
+                setNewModalVisible(true);
+            } else {
+                console.error('Request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+
+
+
     const handleSearchTextChange = (text) => {
         setSearchText(text);
     };
@@ -123,17 +160,10 @@ const ItinariesPages = () => {
     );
 
     return (
-
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Itinaries</Text>
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Search destination"
-                value={searchText}
-                onChangeText={handleSearchTextChange}
-            />
-            {filteredItinaries.length > 0 ? (
-                filteredItinaries.map((itinerary, index) => (
+            {itinaries.length > 0 ? (
+                itinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
                         <Text>Itinerary ID: {itinerary.itinaries_id}</Text>
                         <Text>Start Address: {itinerary.startAddress}</Text>
@@ -201,6 +231,37 @@ const ItinariesPages = () => {
                     </View>
                 </View>
             </Modal>
+            <Modal visible={NewModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalContainer}>
+                    <ScrollView style={styles.modalScrollView}>
+                        <View style={styles.modalContent}>
+                            <Text>Passenger List</Text>
+                            <View style={styles.passengerList}>
+                                {passengersList.map((passenger, index) => (
+                                    <View
+                                        key={index}
+                                        style={[
+                                            styles.passengerCard,
+                                            passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
+                                        ]}
+                                    >
+                                        <Text>User: {passenger.fk_user}</Text>
+                                        <Text>Message: {passenger.message}</Text>
+                                        <View style={styles.buttonContainer}>
+                                            <Button title="Accept" onPress={() => handleAcceptPassenger(passenger)} color="#000000" />
+                                            <Button title="Deny" onPress={() => handleDenyPassenger(passenger)} color="#000000" />
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                            <Button title="Close" onPress={() => setNewModalVisible(false)} color="#000000" />
+                        </View>
+                    </ScrollView>
+                </View>
+            </Modal>
+
+
+
         </ScrollView>
     );
 };
@@ -237,24 +298,49 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    modalScrollView: {
+        width: '90%',
+    },
     modalContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#ffffff',
         padding: 16,
         borderRadius: 10,
     },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
+    passengerList: {
+        alignItems: 'center',
     },
-    searchInput: {
-        width: '80%',
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 10,
+    passengerCard: {
+        width: '100%',
+        padding: 16,
+        marginVertical: 8,
+        borderRadius: 10,
+        shadowColor: '#000000',
+        shadowOpacity: 0.2,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        elevation: 2,
+    },
+    passengerCardRed: {
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    },
+    passengerCardGreen: {
+        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+    },
+    acceptedPassengerCard: {
+        backgroundColor: '#C8E6C9',
+    },
+    deniedPassengerCard: {
+        backgroundColor: '#FFCDD2',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
         paddingHorizontal: 10,
     },
 });
