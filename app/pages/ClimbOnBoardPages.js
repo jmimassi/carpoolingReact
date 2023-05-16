@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const ClimbOnBoardPages = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Home Page</Text>
+            <Text style={styles.title}>ClimbOnBoard</Text>
         </View>
     );
 };

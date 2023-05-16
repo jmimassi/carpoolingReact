@@ -16,7 +16,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="ClimbonBoard" component={ClimbOnBoardPages} />
+        <Drawer.Screen name="ClimbOnBoard" component={ClimbOnBoardPages} />
         <Drawer.Screen name="Home" component={HomePages} />
         <Drawer.Screen name="ModifiedMyItinaries" component={ModifiedMyItinariesPages} />
         <Drawer.Screen name="PublishIttinaries" component={PublishIttinariesPages} />
