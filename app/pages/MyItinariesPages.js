@@ -162,8 +162,14 @@ const ItinariesPages = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Itinaries</Text>
-            {itinaries.length > 0 ? (
-                itinaries.map((itinerary, index) => (
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Search destination"
+                value={searchText}
+                onChangeText={handleSearchTextChange}
+            />
+            {filteredItinaries.length > 0 ? (
+                filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
                         <Text>Itinerary ID: {itinerary.itinaries_id}</Text>
                         <Text>Start Address: {itinerary.startAddress}</Text>
@@ -291,6 +297,15 @@ const styles = StyleSheet.create({
             height: 2,
         },
         elevation: 2,
+    },
+    searchInput: {
+        width: '80%',
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 10,
+        paddingHorizontal: 10,
     },
     modalContainer: {
         flex: 1,
