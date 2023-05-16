@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 const ItinariesPages = () => {
     const [itinaries, setItinaries] = useState([]);
@@ -11,50 +10,64 @@ const ItinariesPages = () => {
 
     const fetchItinaries = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/itinaries');
-            console.log('Response:', response);
+            const token = localStorage.getItem('token');
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            const response = await fetch('http://localhost:8000/api/itinariesCard', options);
+            const data = await response.json();
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('Data:', data);
                 setItinaries(data);
             } else {
                 console.error('Response Status:', response.status);
-                const text = await response.text();
-                console.error('Response Text:', text);
+                console.error('Response Text:', data);
             }
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Itinaries</Text>
             {itinaries.length > 0 ? (
                 itinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
-                        <Text>{itinerary.destination}</Text>
-                        <Text>{itinerary.seats}</Text>
+                        <Text>Itinerary ID: {itinerary.itinaries_id}</Text>
+                        <Text>Start Address: {itinerary.startAddress}</Text>
+                        <Text>Seats: {itinerary.seats}</Text>
+                        <Text>Destination: {itinerary.destination}</Text>
+                        <Text>Created At: {itinerary.createdAt}</Text>
+                        <Text>Updated At: {itinerary.updatedAt}</Text>
+                        <Text>Start Date: {itinerary.startDate}</Text>
+                        <Text>Hours: {itinerary.hours}</Text>
+                        <Text>Conductor Email: {itinerary.conductorEmail}</Text>
+                        <Text>Passenger Emails: {itinerary.passengerEmails}</Text>
                     </View>
                 ))
             ) : (
                 <Text>No itineraries found.</Text>
             )}
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingVertical: 20,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 20,
     },
     card: {
         width: '80%',
