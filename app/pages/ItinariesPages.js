@@ -106,16 +106,12 @@ const ItinariesPages = () => {
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
-                        <Text>Itinerary ID: {itinerary.itinaries_id}</Text>
+                        <Text>Destination: {itinerary.destination}</Text>
                         <Text>Start Address: {itinerary.startAddress}</Text>
                         <Text>Seats: {itinerary.seats}</Text>
-                        <Text>Destination: {itinerary.destination}</Text>
-                        <Text>Created At: {itinerary.createdAt}</Text>
-                        <Text>Updated At: {itinerary.updatedAt}</Text>
                         <Text>Start Date: {itinerary.startDate}</Text>
                         <Text>Hours: {itinerary.hours}</Text>
                         <Text>Conductor Email: {itinerary.conductorEmail}</Text>
-                        <Text>Passenger Emails: {itinerary.passengerEmails}</Text>
                         {username !== itinerary.conductorEmail && (
                             <Button
                                 title="Climb on board"
@@ -130,12 +126,15 @@ const ItinariesPages = () => {
             )}
             {/* Modal */}
             <Modal
-                animationType="slide"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalContainer}>
+                <TouchableOpacity
+                    style={styles.modalContainer}
+                    activeOpacity={1}
+                    onPressOut={() => setModalVisible(false)}
+                >
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Climb on Board</Text>
                         <TextInput
@@ -148,7 +147,7 @@ const ItinariesPages = () => {
                             <Text style={styles.submitButtonText}>Submit</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
             </Modal>
         </ScrollView>
     );
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     submitButton: {
-        backgroundColor: '#4287f5',
+        backgroundColor: '#000000',
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 5,

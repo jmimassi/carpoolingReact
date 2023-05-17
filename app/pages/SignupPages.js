@@ -106,6 +106,8 @@ const SignUpPage = () => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        justifyContent: 'center',
         paddingHorizontal: 20,
         paddingVertical: 30,
         backgroundColor: '#ffffff',
@@ -127,5 +129,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 });
+
 
 export default SignUpPage;

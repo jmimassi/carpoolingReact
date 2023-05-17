@@ -232,17 +232,13 @@ const ItinariesPages = () => {
             />
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
-                    <View key={index} style={styles.card}>
-                        <Text>Itinerary ID: {itinerary.itinaries_id}</Text>
+                    <View key={index} style={[styles.card, itinerary.conductorEmail !== username && (itinerary.passengerRequest[username] ? styles.passengerAcceptedCard : styles.passengerDeniedCard)]}>
+                        <Text>Destination: {itinerary.destination}</Text>
                         <Text>Start Address: {itinerary.startAddress}</Text>
                         <Text>Seats: {itinerary.seats}</Text>
-                        <Text>Destination: {itinerary.destination}</Text>
-                        <Text>Created At: {itinerary.createdAt}</Text>
-                        <Text>Updated At: {itinerary.updatedAt}</Text>
                         <Text>Start Date: {itinerary.startDate}</Text>
                         <Text>Hours: {itinerary.hours}</Text>
                         <Text>Conductor Email: {itinerary.conductorEmail}</Text>
-                        <Text>Passenger Emails: {itinerary.passengerEmails}</Text>
                         {username !== itinerary.conductorEmail ? (
                             <View>
                                 <Button title="Cancel" onPress={() => Cancel(itinerary)} color="#000000" />
@@ -255,11 +251,12 @@ const ItinariesPages = () => {
                             </View>
                         )}
                     </View>
+
                 ))
             ) : (
                 <Text>No itineraries found.</Text>
             )}
-            <Modal visible={modalVisible} animationType="slide" transparent={true}>
+            <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text>Edit Itinerary</Text>
@@ -299,7 +296,7 @@ const ItinariesPages = () => {
                     </View>
                 </View>
             </Modal>
-            <Modal visible={NewModalVisible} animationType="slide" transparent={true}>
+            <Modal visible={NewModalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <ScrollView style={styles.modalScrollView}>
                         <View style={styles.modalContent}>
@@ -355,6 +352,12 @@ const styles = StyleSheet.create({
             height: 2,
         },
         elevation: 2,
+    },
+    passengerAcceptedCard: {
+        backgroundColor: 'lightgreen',
+    },
+    passengerDeniedCard: {
+        backgroundColor: 'lightcoral',
     },
     searchInput: {
         width: '80%',

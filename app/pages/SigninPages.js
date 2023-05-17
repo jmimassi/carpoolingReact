@@ -44,27 +44,35 @@ const SignInPage = () => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={text => setEmail(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={text => setPassword(text)}
-                secureTextEntry
-            />
-            <Button title="Sign In" onPress={handleSignIn} color="#000000" />
-            <Button title="Logout" onPress={handleLogout} color="#000000" />
+            <View style={styles.formContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    secureTextEntry
+                />
+                <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+                <Button title="Logout" onPress={handleLogout} color="#000000" />
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    formContainer: {
+        width: '80%',
         paddingHorizontal: 20,
         paddingVertical: 30,
         backgroundColor: '#ffffff',
@@ -76,6 +84,8 @@ const styles = StyleSheet.create({
             height: 2,
         },
         elevation: 2,
+        borderWidth: 1,
+        borderColor: 'black',
     },
     input: {
         height: 40,
