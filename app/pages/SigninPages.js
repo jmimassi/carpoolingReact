@@ -48,15 +48,17 @@ const SignInPage = () => {
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
+                <Text style={styles.label}>Email</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="Enter email"
                     value={email}
                     onChangeText={text => setEmail(text)}
                 />
+                <Text style={styles.label}>Password</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Password"
+                    placeholder="Enter password"
                     value={password}
                     onChangeText={text => setPassword(text)}
                     secureTextEntry
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 10,
         shadowColor: '#000000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -91,6 +93,11 @@ const styles = StyleSheet.create({
         elevation: 2,
         borderWidth: 1,
         borderColor: 'black',
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
     input: {
         height: 40,

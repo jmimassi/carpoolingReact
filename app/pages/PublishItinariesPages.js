@@ -71,8 +71,14 @@ const PublishItinariesForm = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Publish Itinaries</Text>
             <View style={styles.formContainer}>
+                <Text style={styles.label}>Destination</Text>
+                <TextInput
+                    style={styles.input}
+                    value={destination}
+                    onChangeText={setDestination}
+                    placeholder="Enter destination"
+                />
                 <Text style={styles.label}>Start Address</Text>
                 <TextInput
                     style={styles.input}
@@ -87,13 +93,6 @@ const PublishItinariesForm = () => {
                     onChangeText={setSeats}
                     placeholder="Enter number of seats"
                     keyboardType="numeric"
-                />
-                <Text style={styles.label}>Destination</Text>
-                <TextInput
-                    style={styles.input}
-                    value={destination}
-                    onChangeText={setDestination}
-                    placeholder="Enter destination"
                 />
                 <Text style={styles.label}>Start Date</Text>
                 <TextInput
@@ -123,17 +122,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    formContainer: {
+        width: '80%',
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        shadowColor: '#000000',
+        shadowOpacity: 0.3,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: 'black',
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-    },
-    formContainer: {
-        width: '80%',
-        borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 10,
-        padding: 20,
     },
     label: {
         fontSize: 16,

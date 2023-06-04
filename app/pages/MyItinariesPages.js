@@ -120,8 +120,7 @@ const ItinariesPages = () => {
     };
 
 
-    const requestItinerary = async (
-        itinerary) => {
+    const requestItinerary = async (itinerary) => {
         try {
             const token = await AsyncStorage.getItem('token');
             if (!token) {
@@ -134,14 +133,19 @@ const ItinariesPages = () => {
                     Authorization: `Bearer ${token}`,
                 },
             };
-
+            console.log(itinerary);
+            console.log(itinerary.itinaries_id);
             const response = await fetch(`http://192.168.0.19:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
             const data = await response.json();
 
             if (response.ok) {
                 console.log(data);
                 setModalVisible(false);
-                setPassengersList(data.itinaries_users);
+                if (data) {
+                    setPassengersList(data.itinaries_users);
+                } else {
+                    setPassengersList(null);
+                }
                 setNewModalVisible(true);
             } else {
                 console.error('Request failed');
@@ -236,12 +240,23 @@ const ItinariesPages = () => {
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={[styles.card, itinerary.conductorEmail !== username && (itinerary.passengerRequest[username] ? styles.passengerAcceptedCard : styles.passengerDeniedCard)]}>
-                        <Text>Destination: {itinerary.destination}</Text>
-                        <Text>Start Address: {itinerary.startAddress}</Text>
-                        <Text>Seats: {itinerary.seats}</Text>
-                        <Text>Start Date: {itinerary.startDate}</Text>
-                        <Text>Hours: {itinerary.hours}</Text>
-                        <Text>Conductor Email: {itinerary.conductorEmail}</Text>
+                        <Text style={styles.destination}>{itinerary.destination}</Text>
+
+                        <Text style={styles.label}>🏠 Start Address</Text>
+                        <Text style={styles.cardText}>{itinerary.startAddress}</Text>
+
+                        <Text style={styles.label}>👥 Seats</Text>
+                        <Text style={styles.cardText}>{itinerary.seats}</Text>
+
+                        <Text style={styles.label}>⏰ Start Date</Text>
+                        <Text style={styles.cardText}>{itinerary.startDate}</Text>
+
+                        <Text style={styles.label}>🕒 Hours</Text>
+                        <Text style={styles.cardText}>{itinerary.hours}</Text>
+
+                        <Text style={styles.label}>📧 Conductor</Text>
+                        <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
+
                         {username !== itinerary.conductorEmail ? (
                             <View>
                                 <Button title="Cancel" onPress={() => Cancel(itinerary)} color="#000000" />
@@ -255,6 +270,7 @@ const ItinariesPages = () => {
                         )}
                     </View>
 
+
                 ))
             ) : (
                 <Text>No itineraries found.</Text>
@@ -262,13 +278,23 @@ const ItinariesPages = () => {
             <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text>Edit Itinerary</Text>
+                        <Text style={styles.modalTitle}>Edit Itinarie</Text>
+
+                        <Text style={styles.label}>Destination</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={formValues.destination}
+                            onChangeText={(text) => handleInputChange('destination', text)}
+                            placeholder="Destination"
+                        />
+                        <Text style={styles.label}>Start Adress</Text>
                         <TextInput
                             style={styles.input}
                             value={formValues.startAddress}
                             onChangeText={(text) => handleInputChange('startAddress', text)}
                             placeholder="Start Address"
                         />
+                        <Text style={styles.label}>Seats</Text>
                         <TextInput
                             style={styles.input}
                             value={formValues.seats.toString()}
@@ -276,18 +302,14 @@ const ItinariesPages = () => {
                             placeholder="Seats"
                             keyboardType="numeric"
                         />
-                        <TextInput
-                            style={styles.input}
-                            value={formValues.destination}
-                            onChangeText={(text) => handleInputChange('destination', text)}
-                            placeholder="Destination"
-                        />
+                        <Text style={styles.label}>Start Date</Text>
                         <TextInput
                             style={styles.input}
                             value={formValues.startDate}
                             onChangeText={(text) => handleInputChange('startDate', text)}
                             placeholder="Start Date"
                         />
+                        <Text style={styles.label}>Hours</Text>
                         <TextInput
                             style={styles.input}
                             value={formValues.hours}
@@ -301,9 +323,10 @@ const ItinariesPages = () => {
             </Modal>
             <Modal visible={NewModalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
-                    <ScrollView style={styles.modalScrollView}>
-                        <View style={styles.modalContent}>
-                            <Text>Passenger List</Text>
+                    {/* <ScrollView style={styles.modalScrollView}> */}
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Passenger List</Text>
+                        {passengersList && passengersList.length > 0 ? (
                             <View style={styles.passengerList}>
                                 {passengersList.map((passenger, index) => (
                                     <View
@@ -311,7 +334,8 @@ const ItinariesPages = () => {
                                         style={[
                                             styles.passengerCard,
                                             passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
-                                        ]}>
+                                        ]}
+                                    >
                                         <Text>User: {passenger.fk_user}</Text>
                                         <Text>Message: {passenger.message}</Text>
                                         <View style={styles.buttonContainer}>
@@ -321,11 +345,16 @@ const ItinariesPages = () => {
                                     </View>
                                 ))}
                             </View>
-                            <Button title="Close" onPress={() => setNewModalVisible(false)} color="#000000" />
-                        </View>
-                    </ScrollView>
+                        ) : (
+                            <Text style={{ textAlign: 'center', marginBottom: 12 }}>No passengers</Text>
+
+                        )}
+                        <Button title="Close" onPress={() => setNewModalVisible(false)} color="#000000" />
+                    </View>
+                    {/* </ScrollView> */}
                 </View>
             </Modal>
+
         </ScrollView>
     );
 };
@@ -344,12 +373,12 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '80%',
-        padding: 16,
-        marginVertical: 8,
+        padding: 24,
+        marginVertical: 16,
         borderRadius: 10,
         backgroundColor: '#ffffff',
         shadowColor: '#000000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -377,16 +406,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    modalScrollView: {
-        width: '90%',
-    },
     modalContent: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffffff',
+        width: '80%',
         padding: 16,
         borderRadius: 10,
+        backgroundColor: '#ffffff',
+    },
+    messageInput: {
+        height: 100,
+        borderRadius: 5,
+        borderColor: '#dddddd',
+        borderWidth: 1,
+        marginBottom: 20,
+        padding: 10,
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    modalScrollView: {
+        width: '90%',
     },
     passengerList: {
         alignItems: 'center',
@@ -421,6 +462,26 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 10,
         paddingHorizontal: 10,
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    cardText: {
+        marginBottom: 8,
+    },
+    destination: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 20,
     },
 });
 

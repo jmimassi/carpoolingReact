@@ -111,20 +111,23 @@ const ItinariesPages = () => {
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
-                        <Text style={styles.destination}>📍 {itinerary.destination}</Text>
+                        <Text style={styles.destination}>{itinerary.destination}</Text>
                         <View style={styles.textContainer}>
-                            <Text style={styles.cardText}>🏠 Start Address: {itinerary.startAddress}</Text>
-                            <Text style={styles.cardText}>👥 Seats: {itinerary.seats}</Text>
-                            <Text style={styles.cardText}>⏰ Start Date: {itinerary.startDate}</Text>
-                            <Text style={styles.cardText}>🕒 Hours: {itinerary.hours}</Text>
-                            <Text style={styles.cardText}>📧 Conductor: {itinerary.conductorEmail}</Text>
+                            <Text style={styles.label}>🏠 Start Address</Text>
+                            <Text style={styles.cardText}>{itinerary.startAddress}</Text>
+                            <Text style={styles.label}>👥 Seats</Text>
+                            <Text style={styles.cardText}>{itinerary.seats}</Text>
+                            <Text style={styles.label}>⏰ Start Date</Text>
+                            <Text style={styles.cardText}>{itinerary.startDate}</Text>
+                            <Text style={styles.label}>🕒 Hours</Text>
+                            <Text style={styles.cardText}>{itinerary.hours}</Text>
+                            <Text style={styles.label}>📧 Conductor</Text>
+                            <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
                         </View>
                         {username !== itinerary.conductorEmail && (
-                            <Button
-                                title="Climb on board"
-                                onPress={() => handleClimbOnBoard(itinerary)}
-                                color="#000000"
-                            />
+                            <TouchableOpacity onPress={() => handleClimbOnBoard(itinerary)} style={styles.button}>
+                                <Text style={styles.buttonText}>Climb On Board</Text>
+                            </TouchableOpacity>
                         )}
                     </View>
                 ))
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#ffffff',
         shadowColor: '#000000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -201,10 +204,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     textContainer: {
-        marginTop: 8, // Adjust the marginTop value to create a gap between the destination and the text elements
+        marginTop: 8,
+    },
+    label: {
+        fontWeight: 'bold',
+        marginBottom: 4,
     },
     cardText: {
-        marginBottom: 8, // Adjust the marginBottom value to create a gap between each text element
+        marginBottom: 8,
     },
     modalContainer: {
         flex: 1,
@@ -240,6 +247,16 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     submitButtonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        borderRadius: 5,
+    },
+    buttonText: {
         color: '#ffffff',
         fontWeight: 'bold',
         textAlign: 'center',

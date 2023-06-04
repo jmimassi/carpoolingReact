@@ -56,45 +56,51 @@ const SignUpPage = () => {
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
+                <Text style={styles.label}>Email</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="Enter email"
                     value={email}
                     onChangeText={text => setEmail(text)}
                     required
                 />
+                <Text style={styles.label}>Password</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Password"
+                    placeholder="Enter password"
                     value={password}
                     onChangeText={text => setPassword(text)}
                     secureTextEntry
                     required
                 />
+                <Text style={styles.label}>Address</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Address"
+                    placeholder="Enter address"
                     value={address}
                     onChangeText={text => setAddress(text)}
                     required
                 />
+                <Text style={styles.label}>Max Passengers</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Max Passengers"
+                    placeholder="Enter max passengers"
                     value={maxPassengers.toString()}
                     onChangeText={text => setMaxPassengers(parseInt(text))}
                     keyboardType="numeric"
                     required
                 />
+                <Text style={styles.label}>License Plate</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="License Plate"
+                    placeholder="Enter license plate"
                     value={licensePlate}
                     onChangeText={text => setLicensePlate(text)}
                 />
+                <Text style={styles.label}>Picture</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Picture"
+                    placeholder="Enter picture"
                     value={picture}
                     onChangeText={text => setPicture(text)}
                     required
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 10,
         shadowColor: '#000000',
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.3,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -147,6 +153,11 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
 });
 
