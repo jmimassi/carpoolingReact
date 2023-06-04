@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollViewIndicator } from 'react-native-scrollview-indicator';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 let username = '';
@@ -18,7 +19,6 @@ const ItinariesPages = () => {
         startDate: '',
         hours: ''
     });
-
     const fetchItinaries = async () => {
         try {
             const token = await AsyncStorage.getItem('token');
@@ -57,15 +57,70 @@ const ItinariesPages = () => {
     }, []);
 
     const Cancel = async (itinerary) => {
-        // Actions à effectuer lors du clic sur le bouton "Cancel"
-        console.log(itinerary);
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(
+                `http://192.168.0.19:8000/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
+                options
+            );
+
+            if (response.ok) {
+                console.log('Booking canceled successfully');
+                fetchItinaries();
+            } else {
+                console.error('Cancel request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        fetchItinaries();
     };
 
     const deleteItinerary = async (itinerary) => {
-        // Actions à effectuer lors du clic sur le bouton "Supprimer"
-        console.log(itinerary);
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            const { itinaries_id } = itinerary;
+
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${itinaries_id}`, options);
+
+            if (response.ok) {
+                console.log('Itinerary deleted successfully');
+                fetchItinaries();
+            } else {
+                console.error('Delete request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
         fetchItinaries();
     };
+
 
     const editItinerary = (itinerary) => {
         setSelectedItinerary(itinerary);
@@ -139,10 +194,15 @@ const ItinariesPages = () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log(data);
-                setModalVisible(false);
+                // ...
                 if (data) {
-                    setPassengersList(data.itinaries_users);
+                    setPassengersList(
+                        data.itinaries_users.map((passenger) => ({
+                            ...passenger,
+                            accepted: passenger.request_user === username,
+                        }))
+                    );
+                    console.log("C'est la passenger list:", passengersList);
                 } else {
                     setPassengersList(null);
                 }
@@ -155,8 +215,78 @@ const ItinariesPages = () => {
         }
     };
 
+    const itinariesDecrementSeats = async (itinariesId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in AsyncStorage');
+                return;
+            }
+
+            const options = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(
+                `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsmin`,
+                options
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                // const updatedSeats = data.seats - 1;
+                console.log('Seats updated successfully:', data);
+                fetchItinaries();
+            } else {
+                console.error('Seats update request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const itinariesIncrementSeats = async (itinariesId) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in AsyncStorage');
+                return;
+            }
+
+            const options = {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch(
+                `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsplus`,
+                options
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                // const updatedSeats = data.seats + 1;
+                console.log('Seats updated successfully:', data);
+                fetchItinaries();
+            } else {
+                console.error('Seats update request failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+
     const handleAcceptPassenger = async (passenger) => {
         try {
+
             const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
@@ -179,13 +309,25 @@ const ItinariesPages = () => {
 
             if (response.ok) {
                 console.log('Passenger accepted successfully');
+                itinariesDecrementSeats(passenger.fk_itinaries);
+
+                // Mise à jour de l'état accepted pour le passager
+                setPassengersList((prevPassengersList) =>
+                    prevPassengersList.map((prevPassenger) =>
+                        prevPassenger.itinaries_user_id === passenger.itinaries_user_id
+                            ? { ...prevPassenger, accepted: true }
+                            : prevPassenger
+                    )
+                );
             } else {
                 console.error('Accept request failed');
             }
         } catch (error) {
             console.error('Error:', error);
+            fetchItinaries();
         }
     };
+
 
     const handleDenyPassenger = async (passenger) => {
         try {
@@ -211,29 +353,47 @@ const ItinariesPages = () => {
 
             if (response.ok) {
                 console.log('Passenger denied successfully');
+                console.log(passenger);
+                itinariesIncrementSeats(passenger.fk_itinaries);
+
+                // Mise à jour de l'état accepted pour le passager
+                setPassengersList((prevPassengersList) =>
+                    prevPassengersList.map((prevPassenger) =>
+                        prevPassenger.itinaries_user_id === passenger.itinaries_user_id
+                            ? { ...prevPassenger, accepted: false }
+                            : prevPassenger
+                    )
+                );
             } else {
                 console.error('Deny request failed');
             }
         } catch (error) {
             console.error('Error:', error);
+            fetchItinaries();
         }
     };
 
 
     const handleSearchTextChange = (text) => {
         setSearchText(text);
+
     };
 
     const filteredItinaries = itinaries.filter((itinerary) =>
-        itinerary.destination.toLowerCase().includes(searchText.toLowerCase())
+        itinerary.destination.toLowerCase().includes(searchText.toLowerCase()) ||
+        itinerary.startAddress.toLowerCase().includes(searchText.toLowerCase())
     );
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Itinaries</Text>
+        <ScrollView
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+            style={styles.scrollView}
+        >
+            {/* <Text style={styles.title}>Itinaries</Text> */}
             <TextInput
                 style={styles.searchInput}
-                placeholder="Search destination"
+                placeholder="🔍 Search destination or start address"
                 value={searchText}
                 onChangeText={handleSearchTextChange}
             />
@@ -258,14 +418,20 @@ const ItinariesPages = () => {
                         <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
 
                         {username !== itinerary.conductorEmail ? (
-                            <View>
-                                <Button title="Cancel" onPress={() => Cancel(itinerary)} color="#000000" />
-                            </View>
+                            <TouchableOpacity onPress={() => Cancel(itinerary, username)} style={[styles.button, { backgroundColor: '#000000' }]}>
+                                <Text style={styles.buttonText}>Cancel</Text>
+                            </TouchableOpacity>
                         ) : (
-                            <View>
-                                <Button title="Supprimer" onPress={() => deleteItinerary(itinerary)} color="#000000" />
-                                <Button title="Modifier" onPress={() => editItinerary(itinerary)} color="#000000" />
-                                <Button title="Request" onPress={() => requestItinerary(itinerary)} color="#000000" />
+                            <View >
+                                <TouchableOpacity onPress={() => deleteItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#CE6A6B' }]}>
+                                    <Text style={styles.buttonTextcard}>Supprimer</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => editItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#4A919E' }]}>
+                                    <Text style={styles.buttonTextcard}>Modifier</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => requestItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#212E53' }]}>
+                                    <Text style={styles.buttonTextcard}>Request</Text>
+                                </TouchableOpacity>
                             </View>
                         )}
                     </View>
@@ -326,32 +492,47 @@ const ItinariesPages = () => {
                     {/* <ScrollView style={styles.modalScrollView}> */}
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Passenger List</Text>
-                        {passengersList && passengersList.length > 0 ? (
-                            <View style={styles.passengerList}>
-                                {passengersList.map((passenger, index) => (
-                                    <View
-                                        key={index}
-                                        style={[
-                                            styles.passengerCard,
-                                            passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
-                                        ]}
-                                    >
-                                        <Text>User: {passenger.fk_user}</Text>
-                                        <Text>Message: {passenger.message}</Text>
-                                        <View style={styles.buttonContainer}>
-                                            <Button title="Accept" onPress={() => handleAcceptPassenger(passenger)} color="#000000" />
-                                            <Button title="Deny" onPress={() => handleDenyPassenger(passenger)} color="#000000" />
-                                        </View>
-                                    </View>
-                                ))}
-                            </View>
-                        ) : (
-                            <Text style={{ textAlign: 'center', marginBottom: 12 }}>No passengers</Text>
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}>
+                            {passengersList && passengersList.length > 0 ? (
+                                <View style={styles.passengerList}>
+                                    {passengersList.map((passenger, index) => (
+                                        <View
+                                            key={index}
+                                            style={[
+                                                styles.passengerCard,
+                                                passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
+                                            ]}
+                                        >
+                                            {/* <Text style={styles.cardText}>User: {passenger.fk_user}</Text>
+                                        <Text>Message: {passenger.message}</Text> */}
+                                            <Text style={styles.label}>👥 User</Text>
+                                            <Text style={styles.cardText}>{passenger.fk_user}</Text>
 
-                        )}
+                                            <Text style={styles.label}>✉️ Message</Text>
+                                            <Text style={styles.input}>"{passenger.message}"</Text>
+                                            <View style={styles.buttonContainer}>
+                                                {/* <Button title="Accept" onPress={() => handleAcceptPassenger(passenger)} color="#000000" /> */}
+                                                <TouchableOpacity onPress={() => handleAcceptPassenger(passenger)} style={styles.button}>
+                                                    <Text style={styles.buttonText}>Accept</Text>
+                                                </TouchableOpacity>
+                                                {/* <Button title="Deny" onPress={() => handleDenyPassenger(passenger)} color="#000000" />
+                                             */}
+                                                <TouchableOpacity onPress={() => handleDenyPassenger(passenger)} style={styles.button}>
+                                                    <Text style={styles.buttonText}>Deny</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    ))}
+                                </View>
+                            ) : (
+                                <Text style={{ textAlign: 'center', marginBottom: 12 }}>No passengers</Text>
+
+                            )}
+                        </ScrollView>
                         <Button title="Close" onPress={() => setNewModalVisible(false)} color="#000000" />
                     </View>
-                    {/* </ScrollView> */}
+
                 </View>
             </Modal>
 
@@ -482,6 +663,31 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 20,
+    },
+    button: {
+        width: 80,
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    scrollView: {
+        overflow: 'hidden', // Ajoutez cette ligne pour masquer la barre de défilement
+    },
+    buttoncard: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        borderRadius: 5,
+        margin: 2
+    },
+    buttonTextcard: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 

@@ -39,7 +39,7 @@ const App = () => {
           options={{ unmountOnBlur: true }} // Désactive la mise en cache pour l'écran SignIn
         />
         <Drawer.Screen
-          name="PublishIttinaries"
+          name="Publish"
           component={PublishIttinariesPages}
           options={{ unmountOnBlur: true }} // Désactive la mise en cache pour l'écran PublishIttinaries
         />
@@ -54,7 +54,7 @@ const App = () => {
           options={{ unmountOnBlur: true }} // Désactive la mise en cache pour l'écran Itinaries
         />
         <Drawer.Screen
-          name="MyItinaries"
+          name="My Itinaries"
           component={MyItinariesPages}
           options={{ unmountOnBlur: true }} // Désactive la mise en cache pour l'écran MyItinaries
         />

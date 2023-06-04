@@ -96,18 +96,21 @@ const ItinariesPages = () => {
     };
 
     const filteredItinaries = itinaries.filter((itinerary) =>
-        itinerary.destination.toLowerCase().includes(searchText.toLowerCase())
+        itinerary.destination.toLowerCase().includes(searchText.toLowerCase()) ||
+        itinerary.startAddress.toLowerCase().includes(searchText.toLowerCase())
     );
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {/* <Text style={styles.title}>Itinaries</Text> */}
+        <ScrollView contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+        >
             <TextInput
                 style={styles.searchInput}
-                placeholder="🔍 Search destination"
+                placeholder="🔍 Search destination or start address"
                 value={searchText}
                 onChangeText={handleSearchTextChange}
             />
+            {/* <Text style={styles.title}>Itinaries</Text> */}
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
@@ -232,7 +235,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     messageInput: {
-        height: 100,
+        height: 40,
         borderRadius: 5,
         borderColor: '#dddddd',
         borderWidth: 1,
