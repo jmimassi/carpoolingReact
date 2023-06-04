@@ -53,6 +53,7 @@ const ItinariesPages = () => {
     }, []);
 
     const handleClimbOnBoard = (itinerary) => {
+        console.log(itinerary)
         setSelectedItinerary(itinerary);
         setModalVisible(true);
     };
@@ -81,6 +82,7 @@ const ItinariesPages = () => {
                 .then((data) => {
                     // Traitez la réponse de la requête ici
                     console.log(data);
+                    fetchItinaries();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -90,6 +92,11 @@ const ItinariesPages = () => {
         setModalVisible(false);
         setMessage('');
     };
+
+    const isUserAlreadyOnBoard = (itinerary) => {
+        return itinerary.passengerEmails.includes(username);
+    };
+
 
     const handleSearchTextChange = (text) => {
         setSearchText(text);
@@ -128,9 +135,15 @@ const ItinariesPages = () => {
                             <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
                         </View>
                         {username !== itinerary.conductorEmail && (
-                            <TouchableOpacity onPress={() => handleClimbOnBoard(itinerary)} style={styles.button}>
-                                <Text style={styles.buttonText}>Climb On Board</Text>
-                            </TouchableOpacity>
+                            <View>
+                                {isUserAlreadyOnBoard(itinerary) ? (
+                                    <Text style={styles.errorText}>You are already subscribed</Text>
+                                ) : (
+                                    <TouchableOpacity onPress={() => handleClimbOnBoard(itinerary)} style={styles.button}>
+                                        <Text style={styles.buttonText}>Climb On Board</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
                         )}
                     </View>
                 ))
@@ -263,6 +276,12 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    errorText: {
+        color: '#000000',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 10,
     },
 });
 

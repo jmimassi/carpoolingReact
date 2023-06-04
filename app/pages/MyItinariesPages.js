@@ -418,7 +418,7 @@ const ItinariesPages = () => {
                         <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
 
                         {username !== itinerary.conductorEmail ? (
-                            <TouchableOpacity onPress={() => Cancel(itinerary, username)} style={[styles.button, { backgroundColor: '#000000' }]}>
+                            <TouchableOpacity onPress={() => Cancel(itinerary, username)} style={[styles.buttoncard, { backgroundColor: '#000000' }]}>
                                 <Text style={styles.buttonText}>Cancel</Text>
                             </TouchableOpacity>
                         ) : (
@@ -482,7 +482,11 @@ const ItinariesPages = () => {
                             onChangeText={(text) => handleInputChange('hours', text)}
                             placeholder="Hours"
                         />
-                        <Button title="Submit" onPress={handleSubmit} color="#000000" />
+                        {/* <Button title="Submit" onPress={handleSubmit} color="#000000" />
+                         */}
+                        <TouchableOpacity onPress={() => handleSubmit()} style={[styles.buttoncard, { backgroundColor: '#000000' }]}>
+                            <Text style={styles.buttonText}>Submit</Text>
+                        </TouchableOpacity>
                         <Button title="Cancel" onPress={() => setModalVisible(false)} color="#000000" />
                     </View>
                 </View>
@@ -567,10 +571,10 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     passengerAcceptedCard: {
-        backgroundColor: 'lightgreen',
+        backgroundColor: '#C8E6C9',
     },
     passengerDeniedCard: {
-        backgroundColor: 'lightcoral',
+        backgroundColor: '#FFCDD2',
     },
     searchInput: {
         width: '80%',
