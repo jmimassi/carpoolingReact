@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, Modal, TextInput } from 'react-native';
 import jwt_decode from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let username = '';
 
@@ -11,38 +12,42 @@ const ItinariesPages = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
 
-    useEffect(() => {
-        const fetchItinaries = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    console.error('Token not found in localStorage');
-                    return;
-                }
-
-                const decodedToken = jwt_decode(token);
-                username = decodedToken.id;
-
-                const options = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-
-                const response = await fetch('http://localhost:8000/api/itinariesCard', options);
-                const data = await response.json();
-
-                if (response.ok) {
-                    setItinaries(data);
-                } else {
-                    console.error('Response Status:', response.status);
-                    console.error('Response Text:', data);
-                }
-            } catch (error) {
-                console.error('Error:', error);
+    const fetchItinaries = async () => {
+        const token = await AsyncStorage.getItem('token');
+        console.log("c'est le token", token)
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
             }
-        };
+
+            const decodedToken = jwt_decode(token);
+            username = decodedToken.id;
+
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch('http://192.168.0.19:8000/api/itinariesCard', options);
+            const data = await response.json();
+
+            if (response.ok) {
+                setItinaries(data);
+            } else {
+                console.error('Response Status:', response.status);
+                console.error('Response Text:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+
 
         fetchItinaries();
     }, []);
@@ -71,7 +76,7 @@ const ItinariesPages = () => {
                 body: JSON.stringify(bookingData),
             };
 
-            fetch('http://localhost:8000/api/bookings', options)
+            fetch('http://192.168.0.19:8000/api/bookings', options)
                 .then((response) => response.json())
                 .then((data) => {
                     // Traitez la réponse de la requête ici
@@ -96,22 +101,24 @@ const ItinariesPages = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Itinaries</Text>
+            {/* <Text style={styles.title}>Itinaries</Text> */}
             <TextInput
                 style={styles.searchInput}
-                placeholder="Search destination"
+                placeholder="🔍 Search destination"
                 value={searchText}
                 onChangeText={handleSearchTextChange}
             />
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
-                        <Text>Destination: {itinerary.destination}</Text>
-                        <Text>Start Address: {itinerary.startAddress}</Text>
-                        <Text>Seats: {itinerary.seats}</Text>
-                        <Text>Start Date: {itinerary.startDate}</Text>
-                        <Text>Hours: {itinerary.hours}</Text>
-                        <Text>Conductor Email: {itinerary.conductorEmail}</Text>
+                        <Text style={styles.destination}>📍 {itinerary.destination}</Text>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.cardText}>🏠 Start Address: {itinerary.startAddress}</Text>
+                            <Text style={styles.cardText}>👥 Seats: {itinerary.seats}</Text>
+                            <Text style={styles.cardText}>⏰ Start Date: {itinerary.startDate}</Text>
+                            <Text style={styles.cardText}>🕒 Hours: {itinerary.hours}</Text>
+                            <Text style={styles.cardText}>📧 Conductor: {itinerary.conductorEmail}</Text>
+                        </View>
                         {username !== itinerary.conductorEmail && (
                             <Button
                                 title="Climb on board"
@@ -176,8 +183,8 @@ const styles = StyleSheet.create({
     },
     card: {
         width: '80%',
-        padding: 16,
-        marginVertical: 8,
+        padding: 24,
+        marginVertical: 16,
         borderRadius: 10,
         backgroundColor: '#ffffff',
         shadowColor: '#000000',
@@ -187,6 +194,17 @@ const styles = StyleSheet.create({
             height: 2,
         },
         elevation: 2,
+    },
+    destination: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+    },
+    textContainer: {
+        marginTop: 8, // Adjust the marginTop value to create a gap between the destination and the text elements
+    },
+    cardText: {
+        marginBottom: 8, // Adjust the marginBottom value to create a gap between each text element
     },
     modalContainer: {
         flex: 1,

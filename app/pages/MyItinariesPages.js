@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, Modal, TextInput } from 'react-native';
 import jwt_decode from 'jwt-decode';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 let username = '';
 
 const ItinariesPages = () => {
@@ -19,40 +19,40 @@ const ItinariesPages = () => {
         hours: ''
     });
 
-    useEffect(() => {
-        const fetchItinaries = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    console.error('Token not found in localStorage');
-                    return;
-                }
-
-                const decodedToken = jwt_decode(token);
-                username = decodedToken.id;
-
-                const options = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-
-                const response = await fetch('http://localhost:8000/api/itinariesMyCard', options);
-                const data = await response.json();
-
-                if (response.ok) {
-                    setItinaries(data);
-                    console.log(data);
-                } else {
-                    console.error('Response Status:', response.status);
-                    console.error('Response Text:', data);
-                }
-            } catch (error) {
-                console.error('Error:', error);
+    const fetchItinaries = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
             }
-        };
 
+            const decodedToken = jwt_decode(token);
+            username = decodedToken.id;
+
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await fetch('http://192.168.0.19:8000/api/itinariesMyCard', options);
+            const data = await response.json();
+
+            if (response.ok) {
+                setItinaries(data);
+                console.log(data);
+            } else {
+                console.error('Response Status:', response.status);
+                console.error('Response Text:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchItinaries();
     }, []);
 
@@ -64,6 +64,7 @@ const ItinariesPages = () => {
     const deleteItinerary = async (itinerary) => {
         // Actions à effectuer lors du clic sur le bouton "Supprimer"
         console.log(itinerary);
+        fetchItinaries();
     };
 
     const editItinerary = (itinerary) => {
@@ -87,7 +88,7 @@ const ItinariesPages = () => {
 
     const handleSubmit = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
@@ -102,10 +103,12 @@ const ItinariesPages = () => {
                 body: JSON.stringify(formValues),
             };
 
-            const response = await fetch(`http://localhost:8000/api/itinarie/${selectedItinerary.itinaries_id}`, options);
+            const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${selectedItinerary.itinaries_id}`, options);
 
             if (response.ok) {
                 console.log('Itinerary updated successfully');
+                fetchItinaries();
+                console.log('refetch');
             } else {
                 console.error('Update request failed');
             }
@@ -120,7 +123,7 @@ const ItinariesPages = () => {
     const requestItinerary = async (
         itinerary) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
@@ -132,7 +135,7 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch(`http://localhost:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
+            const response = await fetch(`http://192.168.0.19:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
             const data = await response.json();
 
             if (response.ok) {
@@ -150,7 +153,7 @@ const ItinariesPages = () => {
 
     const handleAcceptPassenger = async (passenger) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
@@ -166,7 +169,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://localhost:8000/api/booking/${itinaries_user_id}/accept`,
+                `http://192.168.0.19:8000/api/booking/${itinaries_user_id}/accept`,
                 options
             );
 
@@ -182,7 +185,7 @@ const ItinariesPages = () => {
 
     const handleDenyPassenger = async (passenger) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
@@ -198,7 +201,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://localhost:8000/api/booking/${itinaries_user_id}/deny`,
+                `http://192.168.0.19:8000/api/booking/${itinaries_user_id}/deny`,
                 options
             );
 

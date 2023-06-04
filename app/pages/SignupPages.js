@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SignUpPage = () => {
     const navigation = useNavigation();
 
@@ -23,7 +23,7 @@ const SignUpPage = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:8000/api/user/register', {
+            const response = await fetch('http://192.168.0.19:8000/api/user/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,51 +55,55 @@ const SignUpPage = () => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={text => setEmail(text)}
-                required
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={text => setPassword(text)}
-                secureTextEntry
-                required
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Address"
-                value={address}
-                onChangeText={text => setAddress(text)}
-                required
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Max Passengers"
-                value={maxPassengers.toString()}
-                onChangeText={text => setMaxPassengers(parseInt(text))}
-                keyboardType="numeric"
-                required
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="License Plate"
-                value={licensePlate}
-                onChangeText={text => setLicensePlate(text)}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Picture"
-                value={picture}
-                onChangeText={text => setPicture(text)}
-                required
-            />
-            <Button title="Sign Up" onPress={handleSignUp} color="#000000" />
-            <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+            <View style={styles.formContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    required
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    secureTextEntry
+                    required
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Address"
+                    value={address}
+                    onChangeText={text => setAddress(text)}
+                    required
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Max Passengers"
+                    value={maxPassengers.toString()}
+                    onChangeText={text => setMaxPassengers(parseInt(text))}
+                    keyboardType="numeric"
+                    required
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="License Plate"
+                    value={licensePlate}
+                    onChangeText={text => setLicensePlate(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Picture"
+                    value={picture}
+                    onChangeText={text => setPicture(text)}
+                    required
+                />
+                <TouchableOpacity onPress={handleSignUp} style={styles.button}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+                <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+            </View>
         </View>
     );
 };
@@ -108,6 +112,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
+    },
+    formContainer: {
+        width: '80%',
         paddingHorizontal: 20,
         paddingVertical: 30,
         backgroundColor: '#ffffff',
@@ -119,6 +127,8 @@ const styles = StyleSheet.create({
             height: 2,
         },
         elevation: 2,
+        borderWidth: 1,
+        borderColor: 'black',
     },
     input: {
         height: 40,
@@ -127,6 +137,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 10,
         paddingHorizontal: 10,
+    },
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 

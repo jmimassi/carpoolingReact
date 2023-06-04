@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const SignInPage = () => {
     const [email, setEmail] = useState('');
@@ -12,11 +14,11 @@ const SignInPage = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:8000/api/user/login', {
+            const response = await fetch('http://192.168.0.19:8000/api/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${AsyncStorage.getItem('token')}`
                 },
                 body: JSON.stringify(formData),
             });
@@ -24,7 +26,7 @@ const SignInPage = () => {
             if (response.ok) {
                 const data = await response.json();
                 // Store user credentials in local storage
-                localStorage.setItem('token', data.token);
+                await AsyncStorage.setItem('token', data.token);
                 console.log('User logged in successfully');
             } else {
                 console.error('Error:', response.status);
@@ -37,9 +39,10 @@ const SignInPage = () => {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         // Supprimez les données du localStorage
-        localStorage.removeItem('token');
+        await AsyncStorage.removeItem('token');
+        console.log('User logged out successfully');
     };
 
     return (
@@ -58,7 +61,9 @@ const SignInPage = () => {
                     onChangeText={text => setPassword(text)}
                     secureTextEntry
                 />
-                <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+                <TouchableOpacity onPress={handleSignIn} style={styles.button}>
+                    <Text style={styles.buttonText}>Sign In</Text>
+                </TouchableOpacity>
                 <Button title="Logout" onPress={handleLogout} color="#000000" />
             </View>
         </View>
@@ -94,6 +99,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 10,
         paddingHorizontal: 10,
+    },
+    button: {
+        backgroundColor: '#000000',
+        paddingVertical: 12,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 
