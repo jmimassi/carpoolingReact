@@ -23,7 +23,7 @@ const SignUpPage = () => {
         };
 
         try {
-            const response = await fetch('http://192.168.0.19:8000/api/user/register', {
+            const response = await fetch('http://pat.infolab.ecam.be:60846/api/user/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

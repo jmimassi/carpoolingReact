@@ -21,7 +21,7 @@ const PublishItinariesForm = () => {
             };
 
             // Effectuer la requête POST vers localhost:8000/itinaries avec les données
-            const response = await fetch('http://192.168.0.19:8000/api/itinaries', {
+            const response = await fetch('http://pat.infolab.ecam.be:60846/api/itinaries', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const PublishItinariesForm = () => {
 
             // Effectuer la deuxième requête POST vers localhost:8000/api/bookings avec les données
             const bookingResponse = await fetch(
-                'http://192.168.0.19:8000/api/bookings',
+                'http://pat.infolab.ecam.be:60846/api/bookings',
                 {
                     method: 'POST',
                     headers: {

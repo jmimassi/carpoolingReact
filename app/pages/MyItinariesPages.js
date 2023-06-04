@@ -37,7 +37,7 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch('http://192.168.0.19:8000/api/itinariesMyCard', options);
+            const response = await fetch('http://pat.infolab.ecam.be:60846/api/itinariesMyCard', options);
             const data = await response.json();
 
             if (response.ok) {
@@ -73,7 +73,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://192.168.0.19:8000/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
+                `http://pat.infolab.ecam.be:60846/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
                 options
             );
 
@@ -107,7 +107,7 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinarie/${itinaries_id}`, options);
 
             if (response.ok) {
                 console.log('Itinerary deleted successfully');
@@ -158,7 +158,7 @@ const ItinariesPages = () => {
                 body: JSON.stringify(formValues),
             };
 
-            const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${selectedItinerary.itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinarie/${selectedItinerary.itinaries_id}`, options);
 
             if (response.ok) {
                 console.log('Itinerary updated successfully');
@@ -190,7 +190,7 @@ const ItinariesPages = () => {
             };
             console.log(itinerary);
             console.log(itinerary.itinaries_id);
-            const response = await fetch(`http://192.168.0.19:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
             const data = await response.json();
 
             if (response.ok) {
@@ -232,7 +232,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsmin`,
+                `http://pat.infolab.ecam.be:60846/api/itinarie/${itinariesId}/seatsmin`,
                 options
             );
 
@@ -266,7 +266,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsplus`,
+                `http://pat.infolab.ecam.be:60846/api/itinarie/${itinariesId}/seatsplus`,
                 options
             );
 
@@ -303,7 +303,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://192.168.0.19:8000/api/booking/${itinaries_user_id}/accept`,
+                `http://pat.infolab.ecam.be:60846/api/booking/${itinaries_user_id}/accept`,
                 options
             );
 
@@ -347,7 +347,7 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://192.168.0.19:8000/api/booking/${itinaries_user_id}/deny`,
+                `http://pat.infolab.ecam.be:60846/api/booking/${itinaries_user_id}/deny`,
                 options
             );
 

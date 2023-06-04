@@ -14,7 +14,7 @@ const SignInPage = () => {
         };
 
         try {
-            const response = await fetch('http://192.168.0.19:8000/api/user/login', {
+            const response = await fetch('http://pat.infolab.ecam.be:60846/api/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

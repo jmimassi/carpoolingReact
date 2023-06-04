@@ -32,7 +32,7 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch('http://192.168.0.19:8000/api/itinariesCard', options);
+            const response = await fetch('http://pat.infolab.ecam.be:60846/api/itinariesCard', options);
             const data = await response.json();
 
             if (response.ok) {
@@ -77,7 +77,7 @@ const ItinariesPages = () => {
                 body: JSON.stringify(bookingData),
             };
 
-            fetch('http://192.168.0.19:8000/api/bookings', options)
+            fetch('http://pat.infolab.ecam.be:60846/api/bookings', options)
                 .then((response) => response.json())
                 .then((data) => {
                     // Traitez la réponse de la requête ici
@@ -148,7 +148,7 @@ const ItinariesPages = () => {
                     </View>
                 ))
             ) : (
-                <Text>No itineraries found.</Text>
+                <Text>No itineraries found</Text>
             )}
             {/* Modal */}
             <Modal
