@@ -64,6 +64,10 @@ const ItinariesPages = () => {
                 return;
             }
 
+            const decodedToken = jwt_decode(token);
+            username = decodedToken.id;
+            console.log(username)
+
             const options = {
                 method: 'DELETE',
                 headers: {
@@ -73,20 +77,22 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
+                `http://pat.infolab.ecam.be:60846/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
                 options
             );
 
+            
             if (response.ok) {
                 console.log('Booking canceled successfully');
                 fetchItinaries();
             } else {
+                console.log(response)
                 console.error('Cancel request failed');
             }
         } catch (error) {
             console.error('Error:', error);
         }
-        fetchItinaries();
+        // fetchItinaries();r
     };
 
     const deleteItinerary = async (itinerary) => {
@@ -418,7 +424,7 @@ const ItinariesPages = () => {
                         <Text style={styles.cardText}>{itinerary.conductorEmail}</Text>
 
                         {username !== itinerary.conductorEmail ? (
-                            <TouchableOpacity onPress={() => Cancel(itinerary, username)} style={[styles.buttoncard, { backgroundColor: '#000000' }]}>
+                            <TouchableOpacity onPress={() => Cancel(itinerary)} style={[styles.buttoncard, { backgroundColor: '#000000' }]}>
                                 <Text style={styles.buttonText}>Cancel</Text>
                             </TouchableOpacity>
                         ) : (
@@ -596,6 +602,7 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 10,
         backgroundColor: '#ffffff',
+        maxHeight: '60%'
     },
     messageInput: {
         height: 100,
@@ -604,6 +611,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 20,
         padding: 10,
+        // maxHeight:500
     },
     modalTitle: {
         fontSize: 24,
@@ -616,6 +624,7 @@ const styles = StyleSheet.create({
     },
     passengerList: {
         alignItems: 'center',
+        // maxHeight: 500, // Définissez la hauteur maximale souhaitée ici
     },
     passengerCard: {
         width: '100%',
