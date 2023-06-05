@@ -17,9 +17,9 @@ const SignUpPage = () => {
             email: email,
             password: password,
             address: address,
-            number_passengers_max: maxPassengers,
+            // number_passengers_max: maxPassengers,
             license_plate: licensePlate,
-            picture: picture,
+            // picture: picture,
         };
 
         try {
@@ -41,9 +41,9 @@ const SignUpPage = () => {
             setEmail('');
             setPassword('');
             setAddress('');
-            setMaxPassengers(0);
+            // setMaxPassengers(0);
             setLicensePlate('');
-            setPicture('');
+            // setPicture('');
         } catch (error) {
             console.error('Error:', error);
         }
@@ -81,7 +81,7 @@ const SignUpPage = () => {
                     onChangeText={text => setAddress(text)}
                     required
                 />
-                <Text style={styles.label}>Max Passengers</Text>
+                {/* <Text style={styles.label}>Max Passengers</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Enter max passengers"
@@ -89,7 +89,7 @@ const SignUpPage = () => {
                     onChangeText={text => setMaxPassengers(parseInt(text))}
                     keyboardType="numeric"
                     required
-                />
+                /> */}
                 <Text style={styles.label}>License Plate</Text>
                 <TextInput
                     style={styles.input}
@@ -97,14 +97,14 @@ const SignUpPage = () => {
                     value={licensePlate}
                     onChangeText={text => setLicensePlate(text)}
                 />
-                <Text style={styles.label}>Picture</Text>
+                {/* <Text style={styles.label}>Picture</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Enter picture"
                     value={picture}
                     onChangeText={text => setPicture(text)}
                     required
-                />
+                /> */}
                 <TouchableOpacity onPress={handleSignUp} style={styles.button}>
                     <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
