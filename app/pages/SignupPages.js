@@ -4,9 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 
-/**
- * Sign-up page component.
- */
 const SignUpPage = () => {
     const navigation = useNavigation();
 
@@ -17,10 +14,9 @@ const SignUpPage = () => {
     const [licensePlate, setLicensePlate] = useState('');
     const [picture, setPicture] = useState('');
 
-    /**
-     * Handles sign-up action.
-     */
     const handleSignUp = async () => {
+
+        // Récupérer le user connecté depuis le token dans le localStorage
         const token = await AsyncStorage.getItem('token');
         const decodedToken = jwt_decode(token);
         const fk_user = decodedToken.id;
@@ -44,6 +40,15 @@ const SignUpPage = () => {
                 body: JSON.stringify(formData),
             });
 
+            // const response = await fetch('http://192.168.0.19:8000/api/user/register', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(formData),
+            // });
+
+            // Handle the response
             if (response.ok) {
                 console.log('User registered successfully');
             } else {
@@ -61,9 +66,6 @@ const SignUpPage = () => {
         }
     };
 
-    /**
-     * Handles sign-in navigation.
-     */
     const handleSignIn = () => {
         navigation.navigate('SignIn');
     };
@@ -101,14 +103,14 @@ const SignUpPage = () => {
                         required
                     />
                     {/* <Text style={styles.label}>Max Passengers</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter max passengers"
-            value={maxPassengers.toString()}
-            onChangeText={text => setMaxPassengers(parseInt(text))}
-            keyboardType="numeric"
-            required
-          /> */}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter max passengers"
+                    value={maxPassengers.toString()}
+                    onChangeText={text => setMaxPassengers(parseInt(text))}
+                    keyboardType="numeric"
+                    required
+                /> */}
                     <Text style={styles.label}>License Plate</Text>
                     <TextInput
                         style={styles.input}
@@ -117,13 +119,13 @@ const SignUpPage = () => {
                         onChangeText={text => setLicensePlate(text)}
                     />
                     {/* <Text style={styles.label}>Picture</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter picture"
-            value={picture}
-            onChangeText={text => setPicture(text)}
-            required
-          /> */}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Enter picture"
+                    value={picture}
+                    onChangeText={text => setPicture(text)}
+                    required
+                /> */}
                     <TouchableOpacity onPress={handleSignUp} style={styles.button}>
                         <Text style={styles.buttonText}>Sign Up</Text>
                     </TouchableOpacity>
@@ -180,5 +182,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
+
 
 export default SignUpPage;

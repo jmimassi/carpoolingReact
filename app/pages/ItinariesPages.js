@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    ScrollView,
-    TouchableOpacity,
-    Button,
-    Modal,
-    TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, Modal, TextInput } from 'react-native';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let username = '';
 
-/**
- * Page des itinéraires
- */
 const ItinariesPages = () => {
     const [itinaries, setItinaries] = useState([]);
     const [selectedItinerary, setSelectedItinerary] = useState(null);
@@ -24,12 +12,11 @@ const ItinariesPages = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
 
-    /**
-     * Récupère les itinéraires depuis l'API
-     */
     const fetchItinaries = async () => {
         const token = await AsyncStorage.getItem('token');
+        console.log("c'est le token", token)
         try {
+            const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
@@ -45,10 +32,8 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch(
-                'http://pat.infolab.ecam.be:60845/api/itinariesCard',
-                options
-            );
+            const response = await fetch('http://pat.infolab.ecam.be:60845/api/itinariesCard', options);
+            // const response = await fetch('http://192.168.0.19:8000/api/itinariesCard', options);
             const data = await response.json();
 
             if (response.ok) {
@@ -63,21 +48,18 @@ const ItinariesPages = () => {
     };
 
     useEffect(() => {
+
+
         fetchItinaries();
     }, []);
 
-    /**
-     * Gère le clic sur le bouton "Climb On Board"
-     * @param {object} itinerary - L'itinéraire sélectionné
-     */
     const handleClimbOnBoard = (itinerary) => {
+        console.log(itinerary)
         setSelectedItinerary(itinerary);
         setModalVisible(true);
     };
 
-    /**
-     * Soumet le formulaire de réservation
-     */
+
     const handleSubmit = async () => {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -87,7 +69,7 @@ const ItinariesPages = () => {
 
         const decodedToken = jwt_decode(token);
         username = decodedToken.id;
-
+        // Actions à effectuer lors de la soumission du formulaire
         if (selectedItinerary && message) {
             const bookingData = {
                 fk_itinaries: selectedItinerary.itinaries_id,
@@ -107,8 +89,10 @@ const ItinariesPages = () => {
             };
 
             fetch('http://pat.infolab.ecam.be:60845/api/bookings', options)
+                // fetch('http://192.168.0.19:8000/api/bookings', options)
                 .then((response) => response.json())
                 .then((data) => {
+                    // Traitez la réponse de la requête ici
                     console.log(data);
                     fetchItinaries();
                 })
@@ -121,35 +105,22 @@ const ItinariesPages = () => {
         setMessage('');
     };
 
-    /**
-     * Vérifie si l'utilisateur est déjà inscrit à un itinéraire
-     * @param {object} itinerary - L'itinéraire à vérifier
-     * @returns {boolean} - True si l'utilisateur est déjà inscrit, sinon False
-     */
     const isUserAlreadyOnBoard = (itinerary) => {
         return itinerary.passengerEmails.includes(username);
     };
 
-    /**
-     * Gère le changement de texte dans le champ de recherche
-     * @param {string} text - Le texte saisi dans le champ de recherche
-     */
+
     const handleSearchTextChange = (text) => {
         setSearchText(text);
     };
 
-    /**
-     * Filtre les itinéraires en fonction du texte de recherche
-     */
-    const filteredItinaries = itinaries.filter(
-        (itinerary) =>
-            itinerary.destination.toLowerCase().includes(searchText.toLowerCase()) ||
-            itinerary.startAddress.toLowerCase().includes(searchText.toLowerCase())
+    const filteredItinaries = itinaries.filter((itinerary) =>
+        itinerary.destination.toLowerCase().includes(searchText.toLowerCase()) ||
+        itinerary.startAddress.toLowerCase().includes(searchText.toLowerCase())
     );
 
     return (
-        <ScrollView
-            contentContainerStyle={styles.container}
+        <ScrollView contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
         >
             <TextInput
@@ -158,7 +129,7 @@ const ItinariesPages = () => {
                 value={searchText}
                 onChangeText={handleSearchTextChange}
             />
-
+            {/* <Text style={styles.title}>Itinaries</Text> */}
             {filteredItinaries.length > 0 ? (
                 filteredItinaries.map((itinerary, index) => (
                     <View key={index} style={styles.card}>
@@ -179,24 +150,24 @@ const ItinariesPages = () => {
                             <View>
                                 {isUserAlreadyOnBoard(itinerary) ? (
                                     <Text style={styles.errorText}>You are already subscribed</Text>
-                                ) : itinerary.seats > 0 ? (
-                                    <TouchableOpacity
-                                        onPress={() => handleClimbOnBoard(itinerary)}
-                                        style={styles.button}
-                                    >
-                                        <Text style={styles.buttonText}>Climb On Board</Text>
-                                    </TouchableOpacity>
                                 ) : (
-                                    <Text style={styles.errorText}>No seats available</Text>
+                                    itinerary.seats > 0 ? (
+                                        <TouchableOpacity onPress={() => handleClimbOnBoard(itinerary)} style={styles.button}>
+                                            <Text style={styles.buttonText}>Climb On Board</Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <Text style={styles.errorText}>No seats available</Text>
+                                    )
                                 )}
                             </View>
                         )}
+
                     </View>
                 ))
             ) : (
                 <Text>No itineraries found</Text>
             )}
-
+            {/* Modal */}
             <Modal
                 transparent={true}
                 visible={modalVisible}
@@ -231,6 +202,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
     searchInput: {
         width: '80%',
