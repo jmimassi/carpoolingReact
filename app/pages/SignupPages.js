@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const SignUpPage = () => {
     const navigation = useNavigation();
 
@@ -54,34 +55,38 @@ const SignUpPage = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.formContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter email"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                    required
-                />
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter password"
-                    value={password}
-                    onChangeText={text => setPassword(text)}
-                    secureTextEntry
-                    required
-                />
-                <Text style={styles.label}>Address</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter address"
-                    value={address}
-                    onChangeText={text => setAddress(text)}
-                    required
-                />
-                {/* <Text style={styles.label}>Max Passengers</Text>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+            <View style={styles.container}>
+                <View style={styles.formContainer}>
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter email"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                        required
+                    />
+                    <Text style={styles.label}>Password</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter password"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        secureTextEntry
+                        required
+                    />
+                    <Text style={styles.label}>Address</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter address"
+                        value={address}
+                        onChangeText={text => setAddress(text)}
+                        required
+                    />
+                    {/* <Text style={styles.label}>Max Passengers</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Enter max passengers"
@@ -90,14 +95,14 @@ const SignUpPage = () => {
                     keyboardType="numeric"
                     required
                 /> */}
-                <Text style={styles.label}>License Plate</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter license plate"
-                    value={licensePlate}
-                    onChangeText={text => setLicensePlate(text)}
-                />
-                {/* <Text style={styles.label}>Picture</Text>
+                    <Text style={styles.label}>License Plate</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter license plate"
+                        value={licensePlate}
+                        onChangeText={text => setLicensePlate(text)}
+                    />
+                    {/* <Text style={styles.label}>Picture</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Enter picture"
@@ -105,12 +110,13 @@ const SignUpPage = () => {
                     onChangeText={text => setPicture(text)}
                     required
                 /> */}
-                <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-                    <Text style={styles.buttonText}>Sign Up</Text>
-                </TouchableOpacity>
-                <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+                    <TouchableOpacity onPress={handleSignUp} style={styles.button}>
+                        <Text style={styles.buttonText}>Sign Up</Text>
+                    </TouchableOpacity>
+                    <Button title="Sign In" onPress={handleSignIn} color="#000000" />
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

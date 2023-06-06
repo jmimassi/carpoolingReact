@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 
 const SignInPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigation = useNavigation();
 
     const handleSignIn = async () => {
         const formData = {
@@ -28,6 +30,7 @@ const SignInPage = () => {
                 // Store user credentials in local storage
                 await AsyncStorage.setItem('token', data.token);
                 console.log('User logged in successfully');
+                navigation.navigate('Itinaries');
             } else {
                 console.error('Error:', response.status);
             }
@@ -46,29 +49,34 @@ const SignInPage = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.formContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter email"
-                    value={email}
-                    onChangeText={text => setEmail(text)}
-                />
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter password"
-                    value={password}
-                    onChangeText={text => setPassword(text)}
-                    secureTextEntry
-                />
-                <TouchableOpacity onPress={handleSignIn} style={styles.button}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                </TouchableOpacity>
-                <Button title="Logout" onPress={handleLogout} color="#000000" />
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+            <View style={styles.container}>
+                <View style={styles.formContainer}>
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter email"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                    />
+                    <Text style={styles.label}>Password</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter password"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        secureTextEntry
+                    />
+                    <TouchableOpacity onPress={handleSignIn} style={styles.button}>
+                        <Text style={styles.buttonText}>Sign In</Text>
+                    </TouchableOpacity>
+                    <Button title="Logout" onPress={handleLogout} color="#000000" />
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

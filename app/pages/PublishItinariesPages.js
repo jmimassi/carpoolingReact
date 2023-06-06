@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -70,49 +70,54 @@ const PublishItinariesForm = () => {
 
 
     return (
-        <View style={styles.container}>
-            <View style={styles.formContainer}>
-                <Text style={styles.label}>Destination</Text>
-                <TextInput
-                    style={styles.input}
-                    value={destination}
-                    onChangeText={setDestination}
-                    placeholder="Enter destination"
-                />
-                <Text style={styles.label}>Start Address</Text>
-                <TextInput
-                    style={styles.input}
-                    value={startAddress}
-                    onChangeText={setStartAddress}
-                    placeholder="Enter start address"
-                />
-                <Text style={styles.label}>Seats</Text>
-                <TextInput
-                    style={styles.input}
-                    value={seats}
-                    onChangeText={setSeats}
-                    placeholder="Enter number of seats"
-                    keyboardType="numeric"
-                />
-                <Text style={styles.label}>Start Date</Text>
-                <TextInput
-                    style={styles.input}
-                    value={startDate}
-                    onChangeText={setStartDate}
-                    placeholder="Enter start date"
-                />
-                <Text style={styles.label}>Hours</Text>
-                <TextInput
-                    style={styles.input}
-                    value={hours}
-                    onChangeText={setHours}
-                    placeholder="Enter hours"
-                />
-                <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                    <Text style={styles.buttonText}>Publish</Text>
-                </TouchableOpacity>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+        >
+            <View style={styles.container}>
+                <View style={styles.formContainer}>
+                    <Text style={styles.label}>Destination</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={destination}
+                        onChangeText={setDestination}
+                        placeholder="Enter destination"
+                    />
+                    <Text style={styles.label}>Start Address</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={startAddress}
+                        onChangeText={setStartAddress}
+                        placeholder="Enter start address"
+                    />
+                    <Text style={styles.label}>Seats</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={seats}
+                        onChangeText={setSeats}
+                        placeholder="Enter number of seats"
+                        keyboardType="numeric"
+                    />
+                    <Text style={styles.label}>Start Date</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={startDate}
+                        onChangeText={setStartDate}
+                        placeholder="Enter start date"
+                    />
+                    <Text style={styles.label}>Hours</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={hours}
+                        onChangeText={setHours}
+                        placeholder="Enter hours"
+                    />
+                    <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                        <Text style={styles.buttonText}>Publish</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

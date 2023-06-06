@@ -81,7 +81,7 @@ const ItinariesPages = () => {
                 options
             );
 
-            
+
             if (response.ok) {
                 console.log('Booking canceled successfully');
                 fetchItinaries();
@@ -449,7 +449,7 @@ const ItinariesPages = () => {
             )}
             <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
+                    <View style={styles.modalContentEdit}>
                         <Text style={styles.modalTitle}>Edit Itinarie</Text>
 
                         <Text style={styles.label}>Destination</Text>
@@ -604,6 +604,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         maxHeight: '60%'
     },
+    modalContentEdit: {
+        width: '80%',
+        padding: 16,
+        borderRadius: 10,
+        backgroundColor: '#ffffff'
+    },
     messageInput: {
         height: 100,
         borderRadius: 5,
@@ -663,7 +669,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     cardText: {
-        marginBottom: 8,
+        marginBottom: 16,
     },
     destination: {
         fontSize: 28,
