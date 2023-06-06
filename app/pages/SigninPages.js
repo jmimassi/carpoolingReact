@@ -3,12 +3,17 @@ import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text, KeyboardAv
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-
+/**
+ * Sign-in page component.
+ */
 const SignInPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
+    /**
+     * Handles sign-in action.
+     */
     const handleSignIn = async () => {
         const formData = {
             email: email,
@@ -16,7 +21,7 @@ const SignInPage = () => {
         };
 
         try {
-            const response = await fetch('http://pat.infolab.ecam.be:60846/api/user/login', {
+            const response = await fetch('http://pat.infolab.ecam.be:60845/api/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,10 +32,9 @@ const SignInPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                // Store user credentials in local storage
                 await AsyncStorage.setItem('token', data.token);
                 console.log('User logged in successfully');
-                navigation.navigate('Itinaries');
+                navigation.navigate('Itineraries');
             } else {
                 console.error('Error:', response.status);
             }
@@ -42,8 +46,10 @@ const SignInPage = () => {
         }
     };
 
+    /**
+     * Handles logout action.
+     */
     const handleLogout = async () => {
-        // Supprimez les données du localStorage
         await AsyncStorage.removeItem('token');
         console.log('User logged out successfully');
     };

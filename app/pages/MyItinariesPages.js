@@ -5,6 +5,7 @@ import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 let username = '';
 
+
 const ItinariesPages = () => {
     const [itinaries, setItinaries] = useState([]);
     const [selectedItinerary, setSelectedItinerary] = useState(null);
@@ -12,6 +13,7 @@ const ItinariesPages = () => {
     const [NewModalVisible, setNewModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [passengersList, setPassengersList] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('');
     const [formValues, setFormValues] = useState({
         startAddress: '',
         seats: 0,
@@ -19,6 +21,7 @@ const ItinariesPages = () => {
         startDate: '',
         hours: ''
     });
+
     const fetchItinaries = async () => {
         try {
             const token = await AsyncStorage.getItem('token');
@@ -37,7 +40,8 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch('http://pat.infolab.ecam.be:60846/api/itinariesMyCard', options);
+            const response = await fetch('http://pat.infolab.ecam.be:60845/api/itinariesMyCard', options);
+
             const data = await response.json();
 
             if (response.ok) {
@@ -77,9 +81,14 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
+                `http://pat.infolab.ecam.be:60845/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
                 options
             );
+
+            // const response = await fetch(
+            //     `http://192.168.0.19:8000/api/booking/user/${username}/itinarie/${itinerary.itinaries_id}`,
+            //     options
+            // );
 
 
             if (response.ok) {
@@ -113,7 +122,8 @@ const ItinariesPages = () => {
                 },
             };
 
-            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinarie/${itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60845/api/itinarie/${itinaries_id}`, options);
+            // const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${itinaries_id}`, options);
 
             if (response.ok) {
                 console.log('Itinerary deleted successfully');
@@ -164,7 +174,8 @@ const ItinariesPages = () => {
                 body: JSON.stringify(formValues),
             };
 
-            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinarie/${selectedItinerary.itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60845/api/itinarie/${selectedItinerary.itinaries_id}`, options);
+            // const response = await fetch(`http://192.168.0.19:8000/api/itinarie/${selectedItinerary.itinaries_id}`, options);
 
             if (response.ok) {
                 console.log('Itinerary updated successfully');
@@ -196,7 +207,8 @@ const ItinariesPages = () => {
             };
             console.log(itinerary);
             console.log(itinerary.itinaries_id);
-            const response = await fetch(`http://pat.infolab.ecam.be:60846/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
+            const response = await fetch(`http://pat.infolab.ecam.be:60845/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
+            // const response = await fetch(`http://192.168.0.19:8000/api/itinaries/PassengerList/${itinerary.itinaries_id}`, options);
             const data = await response.json();
 
             if (response.ok) {
@@ -204,8 +216,7 @@ const ItinariesPages = () => {
                 if (data) {
                     setPassengersList(
                         data.itinaries_users.map((passenger) => ({
-                            ...passenger,
-                            accepted: passenger.request_user === username,
+                            ...passenger
                         }))
                     );
                     console.log("C'est la passenger list:", passengersList);
@@ -238,9 +249,14 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/api/itinarie/${itinariesId}/seatsmin`,
+                `http://pat.infolab.ecam.be:60845/api/itinarie/${itinariesId}/seatsmin`,
                 options
             );
+
+            // const response = await fetch(
+            //     `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsmin`,
+            //     options
+            // );
 
             if (response.ok) {
                 const data = await response.json();
@@ -272,9 +288,14 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/api/itinarie/${itinariesId}/seatsplus`,
+                `http://pat.infolab.ecam.be:60845/api/itinarie/${itinariesId}/seatsplus`,
                 options
             );
+
+            // const response = await fetch(
+            //     `http://192.168.0.19:8000/api/itinarie/${itinariesId}/seatsplus`,
+            //     options
+            // );
 
             if (response.ok) {
                 const data = await response.json();
@@ -291,8 +312,11 @@ const ItinariesPages = () => {
 
 
     const handleAcceptPassenger = async (passenger) => {
+        if (passenger.seats <= 0) {
+            setErrorMessage('No seats available for this itinerary');
+            return; // Empêche d'accepter si les places sont épuisées
+        }
         try {
-
             const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
@@ -309,22 +333,18 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/api/booking/${itinaries_user_id}/accept`,
+                `http://pat.infolab.ecam.be:60845/api/booking/${itinaries_user_id}/accept`,
                 options
             );
+            // const response = await fetch(
+            //     `http://192.168.0.19:8000/api/booking/${itinaries_user_id}/accept`,
+            //     options
+            // );
 
             if (response.ok) {
                 console.log('Passenger accepted successfully');
+                passenger.request_user = true; // Met à jour la propriété request_user du passager
                 itinariesDecrementSeats(passenger.fk_itinaries);
-
-                // Mise à jour de l'état accepted pour le passager
-                setPassengersList((prevPassengersList) =>
-                    prevPassengersList.map((prevPassenger) =>
-                        prevPassenger.itinaries_user_id === passenger.itinaries_user_id
-                            ? { ...prevPassenger, accepted: true }
-                            : prevPassenger
-                    )
-                );
             } else {
                 console.error('Accept request failed');
             }
@@ -334,14 +354,17 @@ const ItinariesPages = () => {
         }
     };
 
-
     const handleDenyPassenger = async (passenger) => {
+        console.log("c'est le token", token)
         try {
             const token = await AsyncStorage.getItem('token');
             if (!token) {
                 console.error('Token not found in localStorage');
                 return;
             }
+
+            const decodedToken = jwt_decode(token);
+            username = decodedToken.id;
 
             const { itinaries_user_id } = passenger;
             const options = {
@@ -353,23 +376,17 @@ const ItinariesPages = () => {
             };
 
             const response = await fetch(
-                `http://pat.infolab.ecam.be:60846/api/booking/${itinaries_user_id}/deny`,
+                `http://pat.infolab.ecam.be:60845/api/booking/${itinaries_user_id}/deny`,
                 options
             );
 
             if (response.ok) {
                 console.log('Passenger denied successfully');
+                passenger.request_user = false; // Met à jour la propriété request_user du passager
                 console.log(passenger);
                 itinariesIncrementSeats(passenger.fk_itinaries);
 
-                // Mise à jour de l'état accepted pour le passager
-                setPassengersList((prevPassengersList) =>
-                    prevPassengersList.map((prevPassenger) =>
-                        prevPassenger.itinaries_user_id === passenger.itinaries_user_id
-                            ? { ...prevPassenger, accepted: false }
-                            : prevPassenger
-                    )
-                );
+
             } else {
                 console.error('Deny request failed');
             }
@@ -378,6 +395,7 @@ const ItinariesPages = () => {
             fetchItinaries();
         }
     };
+
 
 
     const handleSearchTextChange = (text) => {
@@ -430,10 +448,10 @@ const ItinariesPages = () => {
                         ) : (
                             <View >
                                 <TouchableOpacity onPress={() => deleteItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#CE6A6B' }]}>
-                                    <Text style={styles.buttonTextcard}>Supprimer</Text>
+                                    <Text style={styles.buttonTextcard}>Delete</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => editItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#4A919E' }]}>
-                                    <Text style={styles.buttonTextcard}>Modifier</Text>
+                                    <Text style={styles.buttonTextcard}>Edit</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => requestItinerary(itinerary)} style={[styles.buttoncard, { backgroundColor: '#212E53' }]}>
                                     <Text style={styles.buttonTextcard}>Request</Text>
@@ -499,7 +517,6 @@ const ItinariesPages = () => {
             </Modal>
             <Modal visible={NewModalVisible} transparent={true} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
-                    {/* <ScrollView style={styles.modalScrollView}> */}
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Passenger List</Text>
                         <ScrollView
@@ -514,24 +531,35 @@ const ItinariesPages = () => {
                                                 passenger.request_user ? styles.passengerCardGreen : styles.passengerCardRed,
                                             ]}
                                         >
-                                            {/* <Text style={styles.cardText}>User: {passenger.fk_user}</Text>
-                                        <Text>Message: {passenger.message}</Text> */}
                                             <Text style={styles.label}>👥 User</Text>
                                             <Text style={styles.cardText}>{passenger.fk_user}</Text>
 
                                             <Text style={styles.label}>✉️ Message</Text>
                                             <Text style={styles.input}>"{passenger.message}"</Text>
                                             <View style={styles.buttonContainer}>
-                                                {/* <Button title="Accept" onPress={() => handleAcceptPassenger(passenger)} color="#000000" /> */}
-                                                <TouchableOpacity onPress={() => handleAcceptPassenger(passenger)} style={styles.button}>
+                                                {errorMessage !== '' && <Text style={styles.errorText}>{errorMessage}</Text>}
+                                                <TouchableOpacity
+                                                    onPress={() => handleAcceptPassenger(passenger)}
+                                                    style={[
+                                                        styles.button,
+                                                        passenger.request_user && styles.buttonDisabled, // Ajoutez ce style pour les passagers déjà acceptés
+                                                    ]}
+                                                    disabled={passenger.request_user || passenger.seats <= 0} // Désactivez le bouton pour les passagers déjà acceptés ou si les places sont épuisées
+                                                >
                                                     <Text style={styles.buttonText}>Accept</Text>
                                                 </TouchableOpacity>
-                                                {/* <Button title="Deny" onPress={() => handleDenyPassenger(passenger)} color="#000000" />
-                                             */}
-                                                <TouchableOpacity onPress={() => handleDenyPassenger(passenger)} style={styles.button}>
+                                                <TouchableOpacity
+                                                    onPress={() => handleDenyPassenger(passenger)}
+                                                    style={[
+                                                        styles.button,
+                                                        !passenger.request_user && styles.buttonDisabled, // Ajoutez ce style pour les passagers déjà refusés
+                                                    ]}
+                                                    disabled={!passenger.request_user} // Désactivez le bouton pour les passagers déjà refusés
+                                                >
                                                     <Text style={styles.buttonText}>Deny</Text>
                                                 </TouchableOpacity>
                                             </View>
+
                                         </View>
                                     ))}
                                 </View>
@@ -708,6 +736,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    errorText: {
+        color: 'red',
+        marginTop: 10,
+    },
+
 });
 
 export default ItinariesPages;

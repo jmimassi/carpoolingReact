@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-const PublishItinariesForm = () => {
+/**
+ * Form component for publishing itineraries.
+ */
+const PublishItinerariesForm = () => {
     const [startAddress, setStartAddress] = useState('');
     const [seats, setSeats] = useState('');
     const [destination, setDestination] = useState('');
     const [startDate, setStartDate] = useState('');
     const [hours, setHours] = useState('');
+    const navigation = useNavigation();
 
+    /**
+     * Handles form submission.
+     */
     const handleSubmit = async () => {
         try {
             const data = {
@@ -20,54 +28,46 @@ const PublishItinariesForm = () => {
                 hours,
             };
 
-            // Effectuer la requête POST vers localhost:8000/itinaries avec les données
-            const response = await fetch('http://pat.infolab.ecam.be:60846/api/itinaries', {
+            const token = await AsyncStorage.getItem('token');
+            const decodedToken = jwt_decode(token);
+            const fk_user = decodedToken.id;
+
+            const response = await fetch('http://pat.infolab.ecam.be:60845/api/itinaries', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(data),
             });
 
             const responseData = await response.json();
 
-            console.log('Response:', responseData);
-
-            // Récupérer le user connecté depuis le token dans le localStorage
-            const token = await AsyncStorage.getItem('token');
-            const decodedToken = jwt_decode(token);
-            const fk_user = decodedToken.id;
-
             const bookingData = {
-                fk_itinaries: responseData.itinaries_id, // Utiliser la valeur retournée de la première requête
+                fk_itineraries: responseData.itineraries_id,
                 fk_user,
-                type_user: 'conductor', // Remplacer par la valeur appropriée
-                request_user: false, // Remplacer par la valeur appropriée
-                message: 'je suis le conducteur', // Remplacer par la valeur appropriée
+                type_user: 'conductor',
+                request_user: false,
+                message: 'I am the driver',
             };
 
-            // Effectuer la deuxième requête POST vers localhost:8000/api/bookings avec les données
-            const bookingResponse = await fetch(
-                'http://pat.infolab.ecam.be:60846/api/bookings',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(bookingData),
-                }
-            );
+            const bookingResponse = await fetch('http://pat.infolab.ecam.be:60845/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(bookingData),
+            });
 
             const bookingResponseData = await bookingResponse.json();
 
             console.log('Booking Response:', bookingResponseData);
-            // Effectuer des actions supplémentaires après la soumission du formulaire
+            navigation.navigate('Itineraries');
         } catch (error) {
             console.error('Error:', error);
-            // Gérer les erreurs lors de la soumission du formulaire
         }
     };
-
 
     return (
         <KeyboardAvoidingView
@@ -172,4 +172,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PublishItinariesForm;
+export default PublishItinerariesForm;
